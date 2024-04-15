@@ -5,9 +5,24 @@ function getComputerChoice() {
     return choices[Math.floor((Math.random() * choices.length))];
 }
 
-function playRound(playerSelection, computerSelection) {
+var playerWinCounter = 0,
+    botWinCounter = 0;
+const buttons = document.querySelectorAll("button")
+buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+        let Score = playRound(button.className);
+        updateScore(Score);
+    });
+});
 
-    var result;
+const divResult = document.querySelector(".results");
+
+function playRound(playerSelection) {
+    let computerSelection = getComputerChoice()
+        , result;
+    console.log(playerSelection);
+    console.log(computerSelection);
+
     if (computerSelection.toUpperCase() == playerSelection.toUpperCase()) {
         result = `TIE; ${computerSelection} ties with ${playerSelection}`;
         console.log(result);
@@ -39,27 +54,25 @@ function playRound(playerSelection, computerSelection) {
     }
 
     console.log(result);
+
     return result;
 }
 
-function playGame() {
-    let playerWinCounter = 0,
-    botWinCounter = 0;
-
-    for (let i = 0; i < 5; i++) {
-        var playerSelection = prompt("choose Rock, Paper, or Scissors!");
-        var computerSelection = getComputerChoice();
-        let result = playRound(playerSelection, computerSelection);
-        if (result.includes("You Win")) {
-            playerWinCounter += 1;
-        }else if (result.includes("You Lose")){
-            botWinCounter += 1;
-        }
+function updateScore(result) {
+    if (result.includes("Win")) {
+        playerWinCounter++;
+    } else if(result.includes("Lose")){
+        botWinCounter++;
     }
 
-    if (playerWinCounter > botWinCounter) {
-        console.log("Player Wins");
-    } else {
-        console.log("Bot wins");
+    divResult.textContent = `Player Score: ${playerWinCounter}| Bot Score: ${botWinCounter} \n`;
+    if (playerWinCounter >= 5 || botWinCounter >= 5 && playerWinCounter > botWinCounter) {
+        divResult.textContent = "Player Wins";
+        botWinCounter = 0;
+        playerWinCounter = 0;
+    } else if(playerWinCounter >= 5 || botWinCounter >= 5 && playerWinCounter < botWinCounter){
+        divResult.textContent = "Bot wins";
+        botWinCounter = 0;
+        playerWinCounter = 0;
     }
 }
